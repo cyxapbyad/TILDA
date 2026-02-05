@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => {
   if (isLib) {
     return {
       plugins: [react()],
+      define: {
+        'process.env.NODE_ENV': JSON.stringify('production'),
+      },
       build: {
         lib: {
           entry: 'src/teacher-slider-entry.jsx',
