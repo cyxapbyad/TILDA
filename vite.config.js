@@ -1,5 +1,24 @@
+import { createRequire } from 'module'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+
+const require = createRequire(import.meta.url)
+const pkg = require('./package.json')
+
+const banner = `/*! teacher-slider v${pkg.version} */\n`
+
+function bannerPlugin() {
+  return {
+    name: 'banner',
+    generateBundle(_, bundle) {
+      for (const file of Object.values(bundle)) {
+        if (file.type === 'chunk' && file.fileName.includes('teacher-slider')) {
+          file.code = banner + file.code
+        }
+      }
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -7,7 +26,7 @@ export default defineConfig(({ mode }) => {
 
   if (isLib) {
     return {
-      plugins: [react()],
+      plugins: [react(), bannerPlugin()],
       define: {
         'process.env.NODE_ENV': JSON.stringify('production'),
       },
